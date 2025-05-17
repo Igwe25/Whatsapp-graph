@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Igwe@25 Graph Co.</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            width: 95%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: #1e293b;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            color: #4b5563;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #visitCount {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .graph-container {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        #myChart {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+        }
+
+        .data-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-controls button {
+            background-color: #4caf50;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            min-width: 100px;
+        }
+
+        .data-controls button:hover {
+            background-color: #45a049;
+        }
+
+        .data-controls button.active {
+            background-color: #388e3c;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <h1 id="greeting">Welcome to Igwe@25 Graph Co.</h1>
+        <p>Thank you for visiting! This page tracks visits and displays data.</p>
+        <p id="visitCount">Visit Count: 0</p>
+        <div class="data-controls">
+            <button data-type="daily">Daily</button>
+            <button data-type="weekly">Weekly</button>
+            <button data-type="monthly">Monthly</button>
+            <button data-type="mostTalked">Most Talked</button>
+            <button data-type="starredMessages">Starred Messages</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const visitCountElement = document.getElementById('visitCount');
+        let visitCount = 0;
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let myChart;
+        const dataControls = document.querySelectorAll('.data-controls button');
+        let currentDataType = 'daily';
+        let chartTitle = 'Daily WhatsApp Usage';
+        let chartData = {
+            labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+            datasets: [{
+                label: 'Data Usage (MB)',
+                data: [20, 40, 35, 50, 45, 60, 55],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        function getWhatsappUsername() {
+            // Simulate fetching username.  Replace with actual method if available.
+            const usernames = ["User1", "Friend2", "Colleague3", "Family4", "OtherUser5"];
+            const randomIndex = Math.floor(Math.random() * usernames.length);
+            return usernames[randomIndex]; // Return a random username
+        }
+
+        function updateGreeting() {
+            const greetingElement = document.getElementById('greeting');
+            const username = getWhatsappUsername();
+            greetingElement.textContent = `Hey, ${username}! Welcome to Igwe@25 Graph Co.`;
+        }
+
+
+        function updateVisitCount() {
+            visitCount++;
+            visitCountElement.textContent = `Visit Count: ${visitCount}`;
+        }
+
+        function createChart(type, title, data) {
+            if (myChart) {
+                myChart.destroy();
+            }
+            myChart = new Chart(ctx, {
+                type: type,
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title,
+                            font: {
+                                size: 16,
+                                family: 'Inter',
+                                weight: 'normal'
+                            },
+                            padding: {
+                                bottom: 10
+                            }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart(dataType) {
+            currentDataType = dataType;
+            dataControls.forEach(button => {
+                button.classList.remove('active');
+                if (button.dataset.type === dataType) {
+                    button.classList.add('active');
+                }
+            });
+
+            switch (dataType) {
+                case 'daily':
+                    chartTitle = 'Daily WhatsApp Usage';
+                    chartData = {
+                        labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                        datasets: [{
+                            label: 'Data Usage (MB)',
+                            data: [20, 40, 35, 50, 45, 60, 55],
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    };
+                    createChart('bar', chartTitle, chartData);
+                    break;
+                case 'weekly':
+                    chartTitle = 'Weekly WhatsApp Usage';
+                    chartData = {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                        datasets: [{
+                            label: 'Data Usage (MB)',
+                            data: [150, 200, 180, 250],
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    };
+                    createChart('line', chartTitle, chartData);
+                    break;
+                case 'monthly':
+                    chartTitle = 'Monthly WhatsApp Usage';
+                    chartData = {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Data Usage (MB)',
+                            data: [600, 800, 750, 900, 850, 1000],
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    };
+                    createChart('bar', chartTitle, chartData);
+                    break;
+                case 'mostTalked':
+                    chartTitle = 'Most Talked To People';
+                    chartData = {
+                        labels: ['Contact A', 'Contact B', 'Contact C', 'Contact D', 'Contact E'],
+                        datasets: [{
+                            label: 'Message Count',
+                            data: [120, 90, 80, 60, 50],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.6)',
+                                'rgba(54, 162, 235, 0.6)',
+                                'rgba(255, 206, 86, 0.6)',
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(153, 102, 255, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    };
+                    createChart('pie', chartTitle, chartData);
+                    break;
+                case 'starredMessages':
+                    chartTitle = 'Starred Messages Over Time';
+                    chartData = {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                        datasets: [{
+                            label: 'Starred Message Count',
+                            data: [15, 22, 18, 25, 30],
+                            backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1,
+                            type: 'line'
+                        },
+                        {
+                            label: 'Starred Message Count (Bar)',
+                            data: [15, 22, 18, 25, 30],
+                            backgroundColor: 'rgba(255, 159, 64, 0.3)',
+                            borderColor: 'rgba(255, 159, 64, 0.7)',
+                            borderWidth: 1,
+                            type: 'bar'
+                        }]
+                    };
+                    createChart('bar', chartTitle, chartData);
+                    break;
+                default:
+                    chartTitle = 'Daily WhatsApp Usage';
+                    chartData = {
+                        labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                        datasets: [{
+                            label: 'Data Usage (MB)',
+                            data: [20, 40, 35, 50, 45, 60, 55],
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    };
+                    createChart('bar', chartTitle, chartData);
+            }
+        }
+
+        dataControls.forEach(button => {
+            button.addEventListener('click', () => {
+                const dataType = button.dataset.type;
+                updateChart(dataType);
+            });
+        });
+
+        updateGreeting();
+        updateVisitCount();
+        createChart('bar', chartTitle, chartData);
+        dataControls[0].classList.add('active');
+
+    </script>
+</body>
+</html>
